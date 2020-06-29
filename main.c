@@ -1,15 +1,13 @@
 #include <stdlib.h>
 #include <stdio.h>
-#include <string.h>
 #include <time.h>
 #include <omp.h>
 
-#define DIM 1024000       // ajuste a dimensão aqui...
+#define DIM 2048000     // ajuste a dimensão aqui...
 
 // Array estático
 
 double dados [DIM];
-char cpf_str[11][DIM];
 
 int PESOS_CPF_PRIMEIRO_DIGITO[9] = {10, 9, 8, 7, 6, 5, 4, 3, 2};
 int PESOS_CPF_SEGUNDO_DIGITO[10] = {11, 10, 9, 8, 7, 6, 5, 4, 3, 2};
@@ -26,7 +24,7 @@ main(int argc, char *argv[])
         dados[i]= (int)rand() / (int)(RAND_MAX/ 999999991);
     }
     
-    #pragma omp parallel num_threads(32) private(soma_primeiro_digito, soma_segundo_digito, primeiro_digito, segundo_digito, cpf, j, k)
+    #pragma omp parallel num_threads(4) private(soma_primeiro_digito, soma_segundo_digito, primeiro_digito, segundo_digito, cpf, j, k)
    {
         #pragma omp for
             for (i=0; i < DIM; i++){
@@ -66,7 +64,6 @@ main(int argc, char *argv[])
                     {segundo_digito = 11 - (soma_segundo_digito % 11);}
                     
                dados[i] = (dados[i]*10) + segundo_digito;
-               sprintf(cpf_str[i], "%.0f", dados[i]);
             }  
     }    
 
